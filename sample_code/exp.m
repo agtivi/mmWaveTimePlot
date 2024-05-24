@@ -15,11 +15,11 @@ scripts = ["C:\\ti\\mmwave_studio_02_01_01_00\\mmWaveStudio\\Scripts\\Myscript\\
     pause(4);
 
     % check output
-    %for ii=1:10
-    %    disp(sprintf("## %d ##", ii));
-    %    !powershell Get-Content "C:\\ti\\mmwave_studio_02_01_01_00\\mmWaveStudio\\PostProc\\CLI_LogFile.txt" -Tail 5
-    %    pause(1);
-    %end
+    for ii=1:10
+        disp(sprintf("## %d ##", ii));
+        !powershell Get-Content "C:\\ti\\mmwave_studio_02_01_01_00\\mmWaveStudio\\PostProc\\CLI_LogFile.txt" -Tail 5
+        pause(1);
+    end
     
     loadfromfile = 0;
     params = read_from_json('test2.mmwave.json');
