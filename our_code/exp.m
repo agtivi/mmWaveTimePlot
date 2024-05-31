@@ -21,10 +21,72 @@ end
 % After the for loop executes we need to wait a little bit for the chirp profile to be fully executed, 3 seconds or more usually works
 pause(3);
 
-% THERE IS MORE MIDDLEGROUND TO BE COVERED BEFORE THESE NEXT CODE SNIPPETS ARE EXECUTED, DO NOT RUN YET
+params = read_from_json('test2.mmwave.json');
+disp(params);
 
-% This is the timeplot I talked about in the README that I'm not sure if it'll be useful or not. We need to figure out how (wl-nov)/fs*[0:length(I)-1] translates into time
-% We also need to figure out how (I-1)*fs/fftsize is a line that can logically be graphed with respect to time. These snippets appear at line 290 and 291 in experiment_quick_check.m
-% I'm thinking that maybe working our way backwards could help figure this out given that we don't really have much real understanding of how these are plotted exactly.
-figure; plot((wl-nov)/fs*[0:length(I)-1] , (I-1)*fs/fftsize);
-xlabel('Time(s)'); ylabel('frequency (Hz)');
+for ii=1:10
+    disp(sprintf("## %d ##", ii));
+    !powershell Get-Content "C:\\ti\\mmwave_studio_02_01_01_00\\mmWaveStudio\\PostProc\\CLI_LogFile.txt" -Tail 5
+    pause(1);
+end
+
+params.numFrames = 10;
+numFrames = params.numFrames;
+numBinFile = ceil((4*params.numSamplePerChirp*4)*params.numChirps*params.numFrames/1024^3);
+
+numChirpPerFrame = 128; % Number of chirps per frame
+numSamplePerChirp = 1024; % Number of samples per chirp
+fs = 10e6; % Sampling frequency
+sweepBandwidth = 1799e6; % Sweep bandwidth
+
+plot_distance_over_time(numBinFile, params.numFrames, params.numChirps, params.numSamplePerChirp, params.sampleRate, sweepBandwidth);
+
+
+function plot_distance_over_time(numBinFile, nFrame, numChirpPerFrame, numSamplePerChirp, fs, sweepBandwidth)
+    % Read ADC data from binary files
+    adcRawOutput = read_from_binfile(numBinFile, nFrame, numChirpPerFrame, numSamplePerChirp);
+
+    % Pre-allocate the matrix to store distances
+    maxDetections = 1; % Maximum number of object detections per chirp
+    distances = NaN(nFrame, maxDetections);
+
+    % Constants
+    c = 3e8; % Speed of light in m/s
+    rangeResolution = c / (2 * sweepBandwidth);
+
+    % Process each frame
+    for frameIdx = 1:nFrame
+        for chirpIdx = 1:numChirpPerFrame
+            % Extract the current chirp data
+            chirpData = adcRawOutput(:, chirpIdx, frameIdx);
+
+            % Apply FFT to the chirp data
+            fftData = fft(chirpData);
+
+            % Compute the range profile
+            rangeProfile = abs(fftData(1:numSamplePerChirp/2)); % Only use the first half of FFT output
+
+            % Find peaks in the range profile
+            [pks, locs] = findpeaks(rangeProfile, 'SortStr', 'descend');
+
+            % Convert peak locations to distance
+            numDetections = min(maxDetections, length(locs));
+            distances(frameIdx, 1:numDetections) = locs(1:numDetections) * rangeResolution;
+        end
+    end
+
+    % Create a time vector
+    timeVector = (0:nFrame-1) * (numChirpPerFrame / fs);
+
+    % Plot the distances over time
+    figure;
+    hold on;
+    for detectionIdx = 1:maxDetections
+        plot(timeVector, distances(:, detectionIdx), 'DisplayName', sprintf('Object %d', detectionIdx));
+    end
+    hold off;
+    xlabel('Time (s)');
+    ylabel('Distance (m)');
+    title('Distance of Objects Over Time');
+    legend;
+end
