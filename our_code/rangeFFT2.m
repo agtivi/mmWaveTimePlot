@@ -1,10 +1,10 @@
-function [fft_output, I, object_dist] = rangeFFT2(adc_data, params)
+function [fft_output, I, object_dist, magnitudes, ranges] = rangeFFT2(adc_data, params)
     fft_output = fft(adc_data, params.opRangeFFTSize);
     freq_interval = params.sampleRate/params.opRangeFFTSize;
     dist_interval = freq_interval*3e8/(2*params.freqSlope);
-    % find objects within 0.1 - 1 m
+    % find objects within 0.1 - 1.5 m
     min_distance = 0.1;
-    max_distance = 1.0;
+    max_distance = 1.5;
     min_idx = ceil(min_distance/dist_interval);
     max_idx =  ceil(max_distance/dist_interval);
     [M, I] = max(abs(fft_output(min_idx:max_idx)));
@@ -13,9 +13,13 @@ function [fft_output, I, object_dist] = rangeFFT2(adc_data, params)
     object_dist = dist_interval * (I-1);
     %fprintf('Within %.2f - %.2f m, object found at %.3f m index=%d \n', min_distance, max_distance,...
     %    object_dist, I);
-    figure;
+    %figure;
     %subplot(3,1,1); plot(dist_interval*[0:params.opRangeFFTSize-1], abs(fft_output));
-    xlabel('range (m)'); ylabel('Magnitude'); title(''); xlim([min_distance max_distance]);
+    %subplot(3,1,1); plot(abs(fft_output));
+    %subplot(3,1,1); plot(dist_interval*[0:params.opRangeFFTSize-1]);
+    magnitudes = abs(fft_output);
+    ranges = dist_interval*[0:params.opRangeFFTSize-1];
+    %xlabel('range (m)'); ylabel('Magnitude'); title(''); xlim([min_distance max_distance]);
     %subplot(3,1,2); plot(db(fft_output));
     %xlabel('index'); ylabel('range (m)');
     %subplot(3,1,3); plot(abs(fft_output)); hold on;
