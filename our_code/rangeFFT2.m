@@ -1,10 +1,10 @@
-function [fft_output, I, object_dist, magnitudes, ranges] = rangeFFT2(adc_data, params)
+function [fft_output, I, object_dist, magnitudes, ranges] = rangeFFT2(minDist, maxDist, adc_data, params)
     fft_output = fft(adc_data, params.opRangeFFTSize);
     freq_interval = params.sampleRate/params.opRangeFFTSize;
     dist_interval = freq_interval*3e8/(2*params.freqSlope);
     % find objects within 0.1 - 1.5 m
-    min_distance = 0.1;
-    max_distance = 1.5;
+    min_distance = minDist;
+    max_distance = maxDist;
     min_idx = ceil(min_distance/dist_interval);
     max_idx =  ceil(max_distance/dist_interval);
     [M, I] = max(abs(fft_output(min_idx:max_idx)));

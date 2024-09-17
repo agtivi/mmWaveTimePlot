@@ -1,4 +1,4 @@
-function [detectedDistances, absFFTOutputs, distanceIntervals] = experiment2(numFrames, periodicity)
+function [detectedDistances, absFFTOutputs, distanceIntervals] = experiment2(minDist, maxDist, numFrames, periodicity)
     % Clear the workspace and close all figures
     RSTD_Interface_Example
     %clear all; 
@@ -35,8 +35,8 @@ function [detectedDistances, absFFTOutputs, distanceIntervals] = experiment2(num
     %framePeriodicity = params.framePeriodicity; % Assuming this is defined in the JSON configuration
  
     %numFrames = temp_time / framePeriodicity; % Calculate the number of frames for 60 seconds
-    absFFTOutputs = zeros(8192,1,numFrames);
-    distanceIntervals = zeros(1, 8192, numFrames);
+    absFFTOutputs = zeros(params.opRangeFFTSize,1,numFrames);
+    distanceIntervals = zeros(1, params.opRangeFFTSize, numFrames);
     params.numFrames = numFrames;
     disp(params);
     
@@ -67,7 +67,7 @@ function [detectedDistances, absFFTOutputs, distanceIntervals] = experiment2(num
        
         % Assuming we are taking the first chirp for simplicity
         chirpData = datacube.adcdata(:, 1, frame);
-        [fftout, ~, distance, absFFTOutputs(:,:,frame), distanceIntervals(:,:,frame)] = rangeFFT2(chirpData, datacube.params);
+        [fftout, ~, distance, absFFTOutputs(:,:,frame), distanceIntervals(:,:,frame)] = rangeFFT2(minDist, maxDist, chirpData, datacube.params);
         % Identify the peak in the FFT output
         [~, peakIndex] = max(abs(fftout));
         

@@ -23,7 +23,7 @@ scripts = ["C:\\ti\\mmwave_studio_02_01_01_00\\mmWaveStudio\\Scripts\\Myscript\\
     
     loadfromfile = 0;
     params = read_from_json('test2.mmwave.json');
-    numFrames = 5;
+    numFrames = 10;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     params.numFrames = numFrames;
     disp(params);

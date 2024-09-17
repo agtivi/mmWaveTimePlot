@@ -96,10 +96,11 @@
               "rampEndTime_usec": 60.0,
               "txOutPowerBackoffCode": "0x0",
               "txPhaseShifter": "0x1000000",
-              "freqSlopeConst_MHz_usec": 29.982000350952148,
+              "freqSlopeConst_MHz_usec": 57.984001159668,
+              "freqSlopeConst_MHz_usec2": 29.982000350952148,
               "txStartTime_usec": 0.0,
-              "numAdcSamples": 256,
-              "digOutSampleRate": 10000,
+              "numAdcSamples": 100,
+              "digOutSampleRate": 2000,
               "hpfCornerFreq1": 0,
               "hpfCornerFreq2": 0,
               "rxGain_dB": "0x1E"
@@ -110,7 +111,7 @@
           {
             "rlChirpCfg_t": {
               "chirpStartIdx": 0,
-              "chirpEndIdx": 511,
+              "chirpEndIdx": 0,
               "profileId": 0,
               "startFreqVar_MHz": 0.0,
               "freqSlopeVar_KHz_usec": 0.0,
@@ -124,8 +125,8 @@
           "chirpEndIdx": 0,
           "chirpStartIdx": 0,
           "numLoops": 128,
-          "numFrames": 10,
-          "framePeriodicity_msec": 1000.0,
+          "numFrames": 3000,
+          "framePeriodicity_msec": 10.0,
           "triggerSelect": 1,
           "numDummyChirpsAtEnd": 0,
           "frameTriggerDelay": 0.0

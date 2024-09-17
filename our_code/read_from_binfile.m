@@ -11,7 +11,13 @@ function [adcRawOutput] = read_from_binfile(numBinFile, nFrame, numChirpPerFrame
         % filename = sprintf('C:/ti/mmwave_studio_02_01_01_00/mmWaveStudio/PostProc/adc_data_Raw_%d.bin', ii);
         filename = sprintf('C:/ti/mmwave_studio_02_01_01_00/mmWaveStudio/PostProc/adc_data_Raw_%d.bin', ii);
         [fid, errmsg] = fopen(filename, 'r');
+        if fid == -1
+            error('Error opening file: %s', errmsg);
+        end
         ff = dir(filename);
+        if isempty(ff)
+            error('File not found: %s', filename);
+        end
         totalbytes = ff.bytes;
         
         byteIdx = 0;
@@ -57,5 +63,5 @@ function [adcRawOutput] = read_from_binfile(numBinFile, nFrame, numChirpPerFrame
         end
         fclose(fid);
     end
-    %assert(frameIdx == nFrame);
+    %disp(adcRawOutput);
 end

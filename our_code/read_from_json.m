@@ -19,8 +19,8 @@ function [params] = read_from_json(filename)
         b.mmWaveDevices.rfConfig.rlFrameCfg_t.numLoops;
 %     params.numRxChan = radarCube.dim.numRxChan;
     
-    params.opRangeFFTSize = 2^13; %max(2^13, 2^nextpow2(params.numSamplePerChirp));
-    params.opDopplerFFTSize = 2^13; %max(2^13, 2^nextpow2(params.numChirps));
+    params.opRangeFFTSize = max(2^13, 2^nextpow2(params.numSamplePerChirp));
+    params.opDopplerFFTSize = max(2^13, 2^nextpow2(params.numChirps));
     
     fclose(fid);
 end
